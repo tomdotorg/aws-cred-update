@@ -24,7 +24,9 @@ var subcommands = []string{"sts", "get-session-token"} // sts get-session-token"
 var mfaToken, // the actual mfa token
 	mfaSerialNumber, // the mfa arn
 	inputFile, // where to read the config block with access key and secret key
-	outputFile string // where to write the config back
+	outputFile, // where to write the config back
+	mfaProfile, // block in credentials file with the access and secret keys used to obtain a token
+	logLevel string // debug, info, warn, error, fatal
 
 // struct to hold the nested part of the response from the authenticate call
 type awsAccessKey struct {
@@ -51,13 +53,15 @@ func init() {
 	flag.StringVar(&outputFile, "o", filepath.Join(homeDir, "/.aws/credentials"), "output-credentials-file")
 	flag.StringVar(&mfaToken, "t", "", "mfa-token")
 	flag.StringVar(&mfaSerialNumber, "s", "", "mfa-serial-number")
+	flag.StringVar(&mfaProfile, "p", "setup", "credentials-profile")
+	flag.StringVar(&logLevel, "l", "info", "log level (debug, ")
 }
 
-// make sure we have the token and the s/n
+// make sure we have the token and the s/n and set log level if present
 func ensureFlags() {
 	required := []string{"s", "t"}
 	flag.Parse()
-
+	setLogLevel(logLevel)
 	seen := make(map[string]bool)
 	flag.Visit(func(f *flag.Flag) { seen[f.Name] = true })
 	for _, req := range required {
@@ -68,11 +72,30 @@ func ensureFlags() {
 }
 
 func showUsage(hint string) {
-	var usage = "usage: " + filepath.Base(os.Args[0]) + " -s <serialNum> -t <mfaToken>"
+	var usage = "usage: " + filepath.Base(os.Args[0]) + " -s <serialNum> -t <mfaToken> " +
+		"[ -p <profilename> -l { debug, info, warn, error } -i inputfile -o outputfile ]"
 	if hint != "" {
 		log.Error(hint)
 	}
 	log.Fatal(usage)
+}
+
+// allow user to pass in a log level
+func setLogLevel(flag string) {
+	switch flag {
+	case "debug":
+		log.SetLevel(log.DebugLevel)
+	case "info":
+		log.SetLevel(log.InfoLevel)
+	case "warn":
+		log.SetLevel(log.WarnLevel)
+	case "error":
+		log.SetLevel(log.ErrorLevel)
+	default:
+		log.Warn("invalid log level set: ", flag)
+		log.Warn("must be one of { debug, info, warn, error }")
+		log.SetLevel(log.InfoLevel)
+	}
 }
 
 func loadCredentialsFile(path string) *ini.File {
@@ -98,36 +121,36 @@ func writeCredentialsFile(cfg *ini.File, path string) {
 	}
 }
 
+// make sure the aws executable exists
 func ensureAwsInstalled() {
 	path, err := exec.LookPath(command)
 	if err != nil {
 		log.Fatal("aws command not found")
 	}
-	log.WithFields(log.Fields{"exec-path": path}).Info("exec path is ", path)
+	log.Debug("aws exec path is ", path)
 }
 
 // exec the aws command line and return a token
 func authenticate() string {
-	log.Printf("executing: %s %v", command, subcommands)
 	cmd := exec.Command(command, subcommands...)
+	log.Debug("executing: ", cmd)
 	var out, err bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &err
+	cmd.Stdout, cmd.Stderr = &out, &err
 	error := cmd.Run()
 	if error != nil {
-		log.Println("output: ", err.String())
+		log.Error("output: ", err.String())
 		log.Fatal("error running command: ", error)
 	}
-	//log.Println("output: ", out.String())
+	log.Debug("output from authenticate(): ", out.String())
 	return out.String()
 }
 
 func parseResponseJSON(responseJSON string) awsAccessKey {
 	var cred creds
 	json.Unmarshal([]byte(responseJSON), &cred)
-	log.Printf("key id: %s", cred.Credentials.AccessKeyID)
-	log.Printf("secret: %s", cred.Credentials.SecretAccessKey)
-	log.Printf("token: %s", cred.Credentials.SessionToken)
+	log.Debug("key id: %s", cred.Credentials.AccessKeyID)
+	log.Debug("secret: %s", cred.Credentials.SecretAccessKey)
+	log.Debug("token: %s", cred.Credentials.SessionToken)
 	return cred.Credentials
 }
 
@@ -135,19 +158,22 @@ func main() {
 	ensureFlags()
 	log.WithFields(log.Fields{"sn": mfaSerialNumber,
 		"token":      mfaToken,
+		"profile":    mfaProfile,
 		"inputfile":  inputFile,
-		"outputfile": outputFile}).Info()
+		"outputfile": outputFile,
+		"logLevel":   logLevel}).Debug("parameters and flags")
 	subcommands = append(subcommands, "--serial-number",
 		mfaSerialNumber,
-		"--profile=setup",
+		"--profile",
+		mfaProfile,
 		"--token-code",
 		mfaToken)
-
 	ensureAwsInstalled()
 	cfg := loadCredentialsFile(inputFile)
 	response := authenticate()
 	creds := parseResponseJSON(response)
-	//	log.WithFields(log.Fields{"json": response}).Info("response")
+	log.Debug("response: ", response)
 	cfg = updateCredentials(cfg, creds)
 	writeCredentialsFile(cfg, outputFile)
+	log.Info("done - updated ", outputFile)
 }
