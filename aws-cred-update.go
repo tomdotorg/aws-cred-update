@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"os/user"
 	"path/filepath"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/ini.v1"
@@ -176,4 +177,6 @@ func main() {
 	cfg = updateCredentials(cfg, creds)
 	writeCredentialsFile(cfg, outputFile)
 	log.Info("done - updated ", outputFile)
+	t, _ := time.Parse("2006-01-02T15:04:05Z", creds.Expiration)
+	log.Info("session expires: ", t.Local().Format("Mon, Jan 2 15:04"))
 }
