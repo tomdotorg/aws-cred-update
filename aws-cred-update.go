@@ -157,20 +157,18 @@ func parseResponseJSON(responseJSON string) awsAccessKey {
 
 func main() {
 	ensureFlags()
+	ensureAwsInstalled()
 	log.WithFields(log.Fields{"sn": mfaSerialNumber,
 		"token":      mfaToken,
 		"profile":    mfaProfile,
 		"inputfile":  inputFile,
 		"outputfile": outputFile,
 		"logLevel":   logLevel}).Debug("parameters and flags")
-	subcommands = append(subcommands, "--serial-number",
-		mfaSerialNumber,
-		"--profile",
-		mfaProfile,
-		"--token-code",
-		mfaToken)
-	ensureAwsInstalled()
+	subcommands = append(subcommands, "--serial-number", mfaSerialNumber,
+		"--profile", mfaProfile,
+		"--token-code", mfaToken)
 	cfg := loadCredentialsFile(inputFile)
+	log.Info("authenticating")
 	response := authenticate()
 	creds := parseResponseJSON(response)
 	log.Debug("response: ", response)
@@ -178,5 +176,5 @@ func main() {
 	writeCredentialsFile(cfg, outputFile)
 	log.Info("done - updated ", outputFile)
 	t, _ := time.Parse("2006-01-02T15:04:05Z", creds.Expiration)
-	log.Info("session expires: ", t.Local().Format("Mon, Jan 2 15:04"))
+	log.Info("session expires: ", t.Local().Format("2006-01-02 15:04:05 -0700"))
 }
