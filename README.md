@@ -31,3 +31,9 @@ aws_session_token     = HHSGT5542ldzEEAaDJoOMnIX+NLNctzxRCKGAWVTt/zEbt/3jiXq4h3Y
 - -l - log level which must be one of `debug`, `info`, `warn`, `error`. `info` is the default
 - -i - the full path to the credentials file used as input. default is `~/.aws/credentials`
 - -o - the full path to the output credentials file. default is `~/.aws/credentials` ***note: if the input and output are the same. overwrite the output***
+
+If you tun it -l warn, you can capture the exports of the environment variables:
+
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+- AWS_SESSION_TOKEN

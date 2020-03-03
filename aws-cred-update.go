@@ -55,7 +55,7 @@ func init() {
 	flag.StringVar(&mfaToken, "t", "", "mfa-token")
 	flag.StringVar(&mfaSerialNumber, "s", "", "mfa-serial-number")
 	flag.StringVar(&mfaProfile, "p", "setup", "credentials-profile")
-	flag.StringVar(&logLevel, "l", "info", "log level (debug, ")
+	flag.StringVar(&logLevel, "l", "info", "log level (debug, info, warn, error")
 }
 
 // make sure we have the token and the s/n and set log level if present
@@ -155,6 +155,12 @@ func parseResponseJSON(responseJSON string) awsAccessKey {
 	return cred.Credentials
 }
 
+func writeToConsole(creds awsAccessKey) {
+	fmt.Printf("export AWS_ACCESS_KEY_ID=\"%s\"\n", creds.AccessKeyID)
+	fmt.Printf("export AWS_SECRET_ACCESS_KEY=\"%s\"\n", creds.SecretAccessKey)
+	fmt.Printf("export AWS_SESSION_TOKEN=\"%s\"\n", creds.SessionToken)
+}
+
 func main() {
 	ensureFlags()
 	ensureAwsInstalled()
@@ -173,7 +179,9 @@ func main() {
 	creds := parseResponseJSON(response)
 	log.Debug("response: ", response)
 	cfg = updateCredentials(cfg, creds)
+	// set the env vars
 	writeCredentialsFile(cfg, outputFile)
+	writeToConsole(creds)
 	log.Info("done - updated ", outputFile)
 	t, _ := time.Parse("2006-01-02T15:04:05Z", creds.Expiration)
 	log.Info("session expires: ", t.Local().Format("2006-01-02 15:04:05 -0700"))
