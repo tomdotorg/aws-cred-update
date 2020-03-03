@@ -21,13 +21,13 @@ aws_access_key_id     = ASIA5VJSDYSSHY6645789GG
 aws_session_token     = HHSGT5542ldzEEAaDJoOMnIX+NLNctzxRCKGAWVTt/zEbt/3jiXq4h3YsQDsQ4uPoM1pu0IbDJI7hFvEKJRVbgKB22aMliTPE14/EwEArY7rHrJFXDnSY7gFo//W0/6dwWKgHBzoj+aSXGF8MBnE+HeKlcC+ZTqBtZElIvEnwkDarkgLRq8bhEv4kJQhLGqVh1CFjY9SkjljxQBXolrAXpvIKJPM6/IFMii/FJ6C9215uwmmttgd4uligBmzlYBnElwslQ3VuKgFdFJHJJSYSKI9
 ```
 
-Usage
+## Usage
 
 `aws-cred-update -s <serialNum> -t <mfaToken> [ -p <profileName> -l <debug|info|warn|error> -i <inputFile> -o <outputfile> ]`
   
-- -s - aws arn of the principal being authenticated. For example arn:aws:iam::9876523449813:mfa/myman@example.com
-- -t - mfa token obtained by a device, text, or whatever for example 123456 from Google Authenticator
-- -p - profile name in the credentials file containing the access key id and secret key used to obtain a token
-- -l - log level which must be one of debug, info, warn, error. info is the default
-- -i - the full path to the credentials file used as input. default is ~/.aws/credentials
-- -o - the full path to the output credentials file. default is ~/.aws/credentials ***note: if the input and output are the same. overwrite the output***
+- -s - aws arn of the principal being authenticated. For example `arn:aws:iam::9876523449813:mfa/myman@example.com`
+- -t - mfa token obtained by a device, text, or whatever for example `123456` from Google Authenticator
+- -p - profile name in the credentials file containing the access key id and secret key used to obtain a token. default is `setup`
+- -l - log level which must be one of `debug`, `info`, `warn`, `error`. `info` is the default
+- -i - the full path to the credentials file used as input. default is `~/.aws/credentials`
+- -o - the full path to the output credentials file. default is `~/.aws/credentials` ***note: if the input and output are the same. overwrite the output***
