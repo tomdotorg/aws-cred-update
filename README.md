@@ -32,8 +32,10 @@ aws_session_token     = HHSGT5542ldzEEAaDJoOMnIX+NLNctzxRCKGAWVTt/zEbt/3jiXq4h3Y
 - -i - the full path to the credentials file used as input. default is `~/.aws/credentials`
 - -o - the full path to the output credentials file. default is `~/.aws/credentials` ***note: if the input and output are the same. overwrite the output***
 
-If you tun it -l warn, you can capture the exports of the environment variables:
+If you tun the logging level to warn with `-l warn`, you can capture the exports of the environment variables:
 
-- AWS_ACCESS_KEY_ID
-- AWS_SECRET_ACCESS_KEY
-- AWS_SESSION_TOKEN
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_SESSION_TOKEN`
+
+More informatio on how this works at the [AWS website](https://aws.amazon.com/premiumsupport/knowledge-center/authenticate-mfa-cli/).
