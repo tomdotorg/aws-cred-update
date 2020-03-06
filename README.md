@@ -6,7 +6,7 @@ My aws credentials file looks like the one below. One of the parameters to this 
 
 Sample ~/.aws/credentials file:
 
-````windows
+```windows
 [setup]
 aws_access_key_id     = AKIA5SHSUS&&SSSDFVGT
 aws_secret_access_key = Y1QJh+OvhnVrGk5hLinLx9bPDe7MlTweFdTD+oec
