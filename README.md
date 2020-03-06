@@ -6,7 +6,7 @@ My aws credentials file looks like the one below. One of the parameters to this 
 
 Sample ~/.aws/credentials file:
 
-```
+````windows
 [setup]
 aws_access_key_id     = AKIA5SHSUS&&SSSDFVGT
 aws_secret_access_key = Y1QJh+OvhnVrGk5hLinLx9bPDe7MlTweFdTD+oec
@@ -20,6 +20,10 @@ aws_secret_access_key = 2TmBwKPq54cWOAZTrHqxAa697Jf0hhstRSFGHS653
 aws_access_key_id     = ASIA5VJSDYSSHY6645789GG
 aws_session_token     = HHSGT5542ldzEEAaDJoOMnIX+NLNctzxRCKGAWVTt/zEbt/3jiXq4h3YsQDsQ4uPoM1pu0IbDJI7hFvEKJRVbgKB22aMliTPE14/EwEArY7rHrJFXDnSY7gFo//W0/6dwWKgHBzoj+aSXGF8MBnE+HeKlcC+ZTqBtZElIvEnwkDarkgLRq8bhEv4kJQhLGqVh1CFjY9SkjljxQBXolrAXpvIKJPM6/IFMii/FJ6C9215uwmmttgd4uligBmzlYBnElwslQ3VuKgFdFJHJJSYSKI9
 ```
+
+## Installation
+
+`go get github.com/tomdotorg/aws-cred-update` will leave the `aws-cred-update` binary in the ./bin directory.
 
 ## Usage
 
