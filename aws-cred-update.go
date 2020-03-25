@@ -1,4 +1,4 @@
-// Package to experiment with obtaining aws mfa creds & updating local files
+	// Package to experiment with obtaining aws mfa creds & updating local files
 package main
 
 import (
